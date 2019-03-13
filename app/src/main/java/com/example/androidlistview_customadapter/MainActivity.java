@@ -1,7 +1,13 @@
 package com.example.androidlistview_customadapter;
 
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -38,6 +44,14 @@ public class MainActivity extends AppCompatActivity {
         customAdapter = new CustomAdapter(dataModels, getApplicationContext());
 
         listView.setAdapter(customAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                DataModel dataModel = dataModels.get(position);
+                Snackbar.make(view, dataModel.getName()+"\n"+dataModel.getType()+" API: "+dataModel.getVersionNumber(), Snackbar.LENGTH_LONG)
+                        .setAction("No action", null).show();
+            }
+        });
 
     }
 }

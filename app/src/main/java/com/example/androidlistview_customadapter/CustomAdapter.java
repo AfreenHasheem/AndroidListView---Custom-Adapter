@@ -3,9 +3,12 @@ package com.example.androidlistview_customadapter;
 import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,7 +16,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomAdapter extends ArrayAdapter<DataModel> {
+public class CustomAdapter extends ArrayAdapter<DataModel> implements View.OnClickListener {
 
     private Context mContext;
     private ArrayList<DataModel> dataSet;
@@ -24,6 +27,7 @@ public class CustomAdapter extends ArrayAdapter<DataModel> {
         this.dataSet = data;
     }
 
+
     // View lookup cache
     private static class ViewHolder {
         TextView txtName;
@@ -31,6 +35,25 @@ public class CustomAdapter extends ArrayAdapter<DataModel> {
         TextView txtVersion;
         ImageView info;
     }
+
+    @Override
+    public void onClick(View v) {
+
+        int position = (int) v.getTag();
+        Object object = getItem(position);
+        DataModel dataModel = (DataModel) object;
+
+        switch (v.getId()){
+
+            case R.id.item_info:
+                Snackbar.make(v, "Release date " +dataModel.getFeature(), Snackbar.LENGTH_LONG)
+                        .setAction("No action", null).show();
+                break;
+        }
+
+    }
+
+    private int lastPosition = -1;
 
     @Override
     public View getView(int position, View convertView,ViewGroup parent) {
@@ -64,9 +87,14 @@ public class CustomAdapter extends ArrayAdapter<DataModel> {
             result = convertView;
         }
 
+        Animation animation = AnimationUtils.loadAnimation(mContext, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
+        result.startAnimation(animation);
+        lastPosition = position;
+
         viewHolder.txtName.setText(dataModel.getName());
         viewHolder.txtType.setText(dataModel.getType());
         viewHolder.txtVersion.setText(dataModel.getVersionNumber());
+        viewHolder.info.setOnClickListener(this);
         viewHolder.info.setTag(position);
         return result;
     }
